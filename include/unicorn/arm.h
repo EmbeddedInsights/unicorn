@@ -137,6 +137,8 @@ typedef enum uc_arm_reg {
     UC_ARM_REG_MSP,
     UC_ARM_REG_PSP,
     UC_ARM_REG_CONTROL,
+    UC_ARM_REG_PRIMASK,
+    UC_ARM_REG_FAULTMASK,
     UC_ARM_REG_ENDING,		// <-- mark the end of the list or registers
 
     //> alias registers

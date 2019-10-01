@@ -107,6 +107,12 @@ int arm_reg_read(struct uc_struct *uc, unsigned int *regs, void **vals, int coun
                  case UC_ARM_REG_CONTROL:
                     *(uint32_t *)value = helper_v7m_mrs(&ARM_CPU(uc, mycpu)->env, 20);
                     break; 
+                case UC_ARM_REG_PRIMASK:
+                    *(uint32_t *)value = helper_v7m_mrs(&ARM_CPU(uc, mycpu)->env, 16);
+                    break;
+                case UC_ARM_REG_FAULTMASK:
+                    *(uint32_t *)value = helper_v7m_mrs(&ARM_CPU(uc, mycpu)->env, 19);
+                    break;
             }
         }
     }
@@ -174,6 +180,12 @@ int arm_reg_write(struct uc_struct *uc, unsigned int *regs, void* const* vals, i
                     break;
                  case UC_ARM_REG_CONTROL:
                     helper_v7m_msr(&ARM_CPU(uc, mycpu)->env, 20, *(uint32_t *)value);
+                    break;
+                case UC_ARM_REG_PRIMASK:
+                    helper_v7m_msr(&ARM_CPU(uc, mycpu)->env, 16, *(uint32_t *)value);
+                    break;
+                case UC_ARM_REG_FAULTMASK:
+                    helper_v7m_msr(&ARM_CPU(uc, mycpu)->env, 19, *(uint32_t *)value);
                     break;
             }
         }
