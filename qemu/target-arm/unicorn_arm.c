@@ -113,6 +113,9 @@ int arm_reg_read(struct uc_struct *uc, unsigned int *regs, void **vals, int coun
                 case UC_ARM_REG_FAULTMASK:
                     *(uint32_t *)value = helper_v7m_mrs(&ARM_CPU(uc, mycpu)->env, 19);
                     break;
+                case UC_ARM_REG_XPSR:
+                    *(int32_t *)value = xpsr_read(&ARM_CPU(uc, mycpu)->env);
+                    break;
             }
         }
     }
@@ -186,6 +189,9 @@ int arm_reg_write(struct uc_struct *uc, unsigned int *regs, void* const* vals, i
                     break;
                 case UC_ARM_REG_FAULTMASK:
                     helper_v7m_msr(&ARM_CPU(uc, mycpu)->env, 19, *(uint32_t *)value);
+                    break;
+                case UC_ARM_REG_XPSR:
+                    xpsr_write(&ARM_CPU(uc, mycpu)->env, *(uint32_t *)value, ~0);
                     break;
             }
         }
