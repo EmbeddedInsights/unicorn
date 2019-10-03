@@ -44,7 +44,7 @@ if(MSVC)
     )
 else()
     include_directories(
-        ${CMAKE_BINARY_DIR}
+        ${CMAKE_CURRENT_BINARY_DIR}
     )
 endif()
 
@@ -131,86 +131,124 @@ else()
     set (TARGET_LIST "${TARGET_LIST} ")
 
 # GEN dynamic source files
+
+    set(HOST_X86_64 1)
+    set(CONFIG_POSIX 1)
+    set(CONFIG_LINUX 1)
+    set(CONFIG_BYTESWAP_H 1)
+    set(CONFIG_VALGRIND_H 1)
+    set(CONFIG_CPUID_H 1)
+    set(CONFIG_INT128 1)
+
+    configure_file(config-host.h.in ${CMAKE_CURRENT_BINARY_DIR}/config-host.h)
+
     execute_process(COMMAND sh ${CMAKE_CURRENT_SOURCE_DIR}/qemu/configure
         ${EXTRA_CFLAGS}
         ${TARGET_LIST}
+        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     )
-    execute_process(COMMAND sh ${CMAKE_CURRENT_SOURCE_DIR}/qemu/scripts/create_config
-        INPUT_FILE ${CMAKE_BINARY_DIR}/config-host.mak
-        OUTPUT_FILE ${CMAKE_BINARY_DIR}/config-host.h
-    )
+    #execute_process(COMMAND sh ${CMAKE_CURRENT_SOURCE_DIR}/qemu/scripts/create_config
+    #    INPUT_FILE ${CMAKE_CURRENT_BINARY_DIR}/config-host.mak
+    #    OUTPUT_FILE ${CMAKE_CURRENT_BINARY_DIR}/config-host.h
+    #)
+
     if (UNICORN_HAS_X86)
         execute_process(COMMAND sh ${CMAKE_CURRENT_SOURCE_DIR}/qemu/scripts/create_config
-            INPUT_FILE ${CMAKE_BINARY_DIR}/x86_64-softmmu/config-target.mak
-            OUTPUT_FILE ${CMAKE_BINARY_DIR}/x86_64-softmmu/config-target.h
+            INPUT_FILE ${CMAKE_CURRENT_BINARY_DIR}/x86_64-softmmu/config-target.mak
+            OUTPUT_FILE ${CMAKE_CURRENT_BINARY_DIR}/x86_64-softmmu/config-target.h
         )
     endif()
     if (UNICORN_HAS_ARM)
-        execute_process(COMMAND sh ${CMAKE_CURRENT_SOURCE_DIR}/qemu/scripts/create_config
-            INPUT_FILE ${CMAKE_BINARY_DIR}/arm-softmmu/config-target.mak
-            OUTPUT_FILE ${CMAKE_BINARY_DIR}/arm-softmmu/config-target.h
-        )
-        execute_process(COMMAND sh ${CMAKE_CURRENT_SOURCE_DIR}/qemu/scripts/create_config
-            INPUT_FILE ${CMAKE_BINARY_DIR}/armeb-softmmu/config-target.mak
-            OUTPUT_FILE ${CMAKE_BINARY_DIR}/armeb-softmmu/config-target.h
-        )
+    
+        set(TARGET_NAME "arm")
+        set(TARGET_NAME_VAR TARGET_ARM)
+        set(CONFIG_SOFTMMU 1)
+        set(TARGET_WORDS_BIGENDIAN 0)
+        configure_file(config-target.h.in ${CMAKE_CURRENT_BINARY_DIR}/arm-softmmu/config-target.h)
+
+        set(TARGET_NAME "armeb")
+        set(TARGET_WORDS_BIGENDIAN 1)
+        configure_file(config-target.h.in ${CMAKE_CURRENT_BINARY_DIR}/armeb-softmmu/config-target.h)
     endif()
+#[[
     if (UNICORN_HAS_AARCH64)
         execute_process(COMMAND sh ${CMAKE_CURRENT_SOURCE_DIR}/qemu/scripts/create_config
-            INPUT_FILE ${CMAKE_BINARY_DIR}/aarch64-softmmu/config-target.mak
-            OUTPUT_FILE ${CMAKE_BINARY_DIR}/aarch64-softmmu/config-target.h
+            INPUT_FILE ${CMAKE_CURRENT_BINARY_DIR}/aarch64-softmmu/config-target.mak
+            OUTPUT_FILE ${CMAKE_CURRENT_BINARY_DIR}/aarch64-softmmu/config-target.h
         )
         execute_process(COMMAND sh ${CMAKE_CURRENT_SOURCE_DIR}/qemu/scripts/create_config
-            INPUT_FILE ${CMAKE_BINARY_DIR}/aarch64eb-softmmu/config-target.mak
-            OUTPUT_FILE ${CMAKE_BINARY_DIR}/aarch64eb-softmmu/config-target.h
+            INPUT_FILE ${CMAKE_CURRENT_BINARY_DIR}/aarch64eb-softmmu/config-target.mak
+            OUTPUT_FILE ${CMAKE_CURRENT_BINARY_DIR}/aarch64eb-softmmu/config-target.h
         )
     endif()
     if (UNICORN_HAS_M68K)
         execute_process(COMMAND sh ${CMAKE_CURRENT_SOURCE_DIR}/qemu/scripts/create_config
-            INPUT_FILE ${CMAKE_BINARY_DIR}/m68k-softmmu/config-target.mak
-            OUTPUT_FILE ${CMAKE_BINARY_DIR}/m68k-softmmu/config-target.h
+            INPUT_FILE ${CMAKE_CURRENT_BINARY_DIR}/m68k-softmmu/config-target.mak
+            OUTPUT_FILE ${CMAKE_CURRENT_BINARY_DIR}/m68k-softmmu/config-target.h
         )
     endif()
     if (UNICORN_HAS_MIPS)
         execute_process(COMMAND sh ${CMAKE_CURRENT_SOURCE_DIR}/qemu/scripts/create_config
-            INPUT_FILE ${CMAKE_BINARY_DIR}/mips-softmmu/config-target.mak
-            OUTPUT_FILE ${CMAKE_BINARY_DIR}/mips-softmmu/config-target.h
+            INPUT_FILE ${CMAKE_CURRENT_BINARY_DIR}/mips-softmmu/config-target.mak
+            OUTPUT_FILE ${CMAKE_CURRENT_BINARY_DIR}/mips-softmmu/config-target.h
         )
         execute_process(COMMAND sh ${CMAKE_CURRENT_SOURCE_DIR}/qemu/scripts/create_config
-            INPUT_FILE ${CMAKE_BINARY_DIR}/mipsel-softmmu/config-target.mak
-            OUTPUT_FILE ${CMAKE_BINARY_DIR}/mipsel-softmmu/config-target.h
+            INPUT_FILE ${CMAKE_CURRENT_BINARY_DIR}/mipsel-softmmu/config-target.mak
+            OUTPUT_FILE ${CMAKE_CURRENT_BINARY_DIR}/mipsel-softmmu/config-target.h
         )
         execute_process(COMMAND sh ${CMAKE_CURRENT_SOURCE_DIR}/qemu/scripts/create_config
-            INPUT_FILE ${CMAKE_BINARY_DIR}/mips64-softmmu/config-target.mak
-            OUTPUT_FILE ${CMAKE_BINARY_DIR}/mips64-softmmu/config-target.h
+            INPUT_FILE ${CMAKE_CURRENT_BINARY_DIR}/mips64-softmmu/config-target.mak
+            OUTPUT_FILE ${CMAKE_CURRENT_BINARY_DIR}/mips64-softmmu/config-target.h
         )
         execute_process(COMMAND sh ${CMAKE_CURRENT_SOURCE_DIR}/qemu/scripts/create_config
-            INPUT_FILE ${CMAKE_BINARY_DIR}/mips64el-softmmu/config-target.mak
-            OUTPUT_FILE ${CMAKE_BINARY_DIR}/mips64el-softmmu/config-target.h
+            INPUT_FILE ${CMAKE_CURRENT_BINARY_DIR}/mips64el-softmmu/config-target.mak
+            OUTPUT_FILE ${CMAKE_CURRENT_BINARY_DIR}/mips64el-softmmu/config-target.h
         )
     endif()
     if (UNICORN_HAS_SPARC)
         execute_process(COMMAND sh ${CMAKE_CURRENT_SOURCE_DIR}/qemu/scripts/create_config
-            INPUT_FILE ${CMAKE_BINARY_DIR}/sparc-softmmu/config-target.mak
-            OUTPUT_FILE ${CMAKE_BINARY_DIR}/sparc-softmmu/config-target.h
+            INPUT_FILE ${CMAKE_CURRENT_BINARY_DIR}/sparc-softmmu/config-target.mak
+            OUTPUT_FILE ${CMAKE_CURRENT_BINARY_DIR}/sparc-softmmu/config-target.h
         )
         execute_process(COMMAND sh ${CMAKE_CURRENT_SOURCE_DIR}/qemu/scripts/create_config
-            INPUT_FILE ${CMAKE_BINARY_DIR}/sparc64-softmmu/config-target.mak
-            OUTPUT_FILE ${CMAKE_BINARY_DIR}/sparc64-softmmu/config-target.h
+            INPUT_FILE ${CMAKE_CURRENT_BINARY_DIR}/sparc64-softmmu/config-target.mak
+            OUTPUT_FILE ${CMAKE_CURRENT_BINARY_DIR}/sparc64-softmmu/config-target.h
         )
     endif()
+]]
+    add_custom_command(
+        OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/qapi-types.h
+        COMMAND python  -B ${CMAKE_CURRENT_SOURCE_DIR}/qemu/scripts/qapi-types.py
+                        -h -o ${CMAKE_CURRENT_BINARY_DIR} -b -i ${CMAKE_CURRENT_SOURCE_DIR}/qemu/qapi-schema.json)
+
+    add_custom_command(
+        OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/qapi-types.c
+        COMMAND python  -B ${CMAKE_CURRENT_SOURCE_DIR}/qemu/scripts/qapi-types.py
+                        -c -o ${CMAKE_CURRENT_BINARY_DIR} -b -i ${CMAKE_CURRENT_SOURCE_DIR}/qemu/qapi-schema.json)
+
+    add_custom_command(
+        OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/qapi-visit.h
+        COMMAND python  -B ${CMAKE_CURRENT_SOURCE_DIR}/qemu/scripts/qapi-visit.py
+                        -h -o ${CMAKE_CURRENT_BINARY_DIR} -b -i ${CMAKE_CURRENT_SOURCE_DIR}/qemu/qapi-schema.json)
+
+    add_custom_command(
+        OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/qapi-visit.c
+        COMMAND python  -B ${CMAKE_CURRENT_SOURCE_DIR}/qemu/scripts/qapi-visit.py
+                        -c -o ${CMAKE_CURRENT_BINARY_DIR} -b -i ${CMAKE_CURRENT_SOURCE_DIR}/qemu/qapi-schema.json)
+#[[
     execute_process(COMMAND python -B ${CMAKE_CURRENT_SOURCE_DIR}/qemu/scripts/qapi-types.py
-        -h -o ${CMAKE_BINARY_DIR} -b -i ${CMAKE_CURRENT_SOURCE_DIR}/qemu/qapi-schema.json
+        -h -o ${CMAKE_CURRENT_BINARY_DIR} -b -i ${CMAKE_CURRENT_SOURCE_DIR}/qemu/qapi-schema.json
     )
     execute_process(COMMAND python -B ${CMAKE_CURRENT_SOURCE_DIR}/qemu/scripts/qapi-types.py
-        -c -o ${CMAKE_BINARY_DIR} -b -i ${CMAKE_CURRENT_SOURCE_DIR}/qemu/qapi-schema.json
+        -c -o ${CMAKE_CURRENT_BINARY_DIR} -b -i ${CMAKE_CURRENT_SOURCE_DIR}/qemu/qapi-schema.json
     )
     execute_process(COMMAND python -B ${CMAKE_CURRENT_SOURCE_DIR}/qemu/scripts/qapi-visit.py
-        -h -o ${CMAKE_BINARY_DIR} -b -i ${CMAKE_CURRENT_SOURCE_DIR}/qemu/qapi-schema.json
+        -h -o ${CMAKE_CURRENT_BINARY_DIR} -b -i ${CMAKE_CURRENT_SOURCE_DIR}/qemu/qapi-schema.json
     )
     execute_process(COMMAND python -B ${CMAKE_CURRENT_SOURCE_DIR}/qemu/scripts/qapi-visit.py
-        -c -o ${CMAKE_BINARY_DIR} -b -i ${CMAKE_CURRENT_SOURCE_DIR}/qemu/qapi-schema.json
+        -c -o ${CMAKE_CURRENT_BINARY_DIR} -b -i ${CMAKE_CURRENT_SOURCE_DIR}/qemu/qapi-schema.json
     )
+]]
     add_compile_options(
         -I${CMAKE_CURRENT_SOURCE_DIR}/qemu/tcg/i386
         -D_GNU_SOURCE
@@ -265,7 +303,7 @@ else()
     target_compile_options(x86_64-softmmu PRIVATE
         -DNEED_CPU_H
         -include x86_64.h
-        -I${CMAKE_BINARY_DIR}/x86_64-softmmu
+        -I${CMAKE_CURRENT_BINARY_DIR}/x86_64-softmmu
         -I${CMAKE_CURRENT_SOURCE_DIR}/qemu/target-i386
     )
 endif()
@@ -295,6 +333,8 @@ add_library(arm-softmmu
     qemu/tcg/optimize.c
     qemu/tcg/tcg.c
     qemu/translate-all.c
+    ${CMAKE_CURRENT_BINARY_DIR}/qapi-types.h
+    ${CMAKE_CURRENT_BINARY_DIR}/qapi-visit.h
 )
 
 if(MSVC)
@@ -308,7 +348,7 @@ else()
     target_compile_options(arm-softmmu PRIVATE
         -DNEED_CPU_H
         -include arm.h
-        -I${CMAKE_BINARY_DIR}/arm-softmmu
+        -I${CMAKE_CURRENT_BINARY_DIR}/arm-softmmu
         -I${CMAKE_CURRENT_SOURCE_DIR}/qemu/target-arm
     )
 endif()
@@ -349,7 +389,7 @@ else()
     target_compile_options(armeb-softmmu PRIVATE
         -DNEED_CPU_H
         -include armeb.h
-        -I${CMAKE_BINARY_DIR}/armeb-softmmu
+        -I${CMAKE_CURRENT_BINARY_DIR}/armeb-softmmu
         -I${CMAKE_CURRENT_SOURCE_DIR}/qemu/target-arm
     )
 endif()
@@ -395,7 +435,7 @@ else()
     target_compile_options(aarch64-softmmu PRIVATE
         -DNEED_CPU_H
         -include aarch64.h
-        -I${CMAKE_BINARY_DIR}/aarch64-softmmu
+        -I${CMAKE_CURRENT_BINARY_DIR}/aarch64-softmmu
         -I${CMAKE_CURRENT_SOURCE_DIR}/qemu/target-arm
     )
 endif()
@@ -439,7 +479,7 @@ else()
     target_compile_options(aarch64eb-softmmu PRIVATE
         -DNEED_CPU_H
         -include aarch64eb.h
-        -I${CMAKE_BINARY_DIR}/aarch64eb-softmmu
+        -I${CMAKE_CURRENT_BINARY_DIR}/aarch64eb-softmmu
         -I${CMAKE_CURRENT_SOURCE_DIR}/qemu/target-arm
     )
 endif()
@@ -477,7 +517,7 @@ else()
     target_compile_options(m68k-softmmu PRIVATE
         -DNEED_CPU_H
         -include m68k.h
-        -I${CMAKE_BINARY_DIR}/m68k-softmmu
+        -I${CMAKE_CURRENT_BINARY_DIR}/m68k-softmmu
         -I${CMAKE_CURRENT_SOURCE_DIR}/qemu/target-m68k
     )
 endif()
@@ -520,7 +560,7 @@ else()
     target_compile_options(mips-softmmu PRIVATE
         -DNEED_CPU_H
         -include mips.h
-        -I${CMAKE_BINARY_DIR}/mips-softmmu
+        -I${CMAKE_CURRENT_BINARY_DIR}/mips-softmmu
         -I${CMAKE_CURRENT_SOURCE_DIR}/qemu/target-mips
     )
 endif()
@@ -561,7 +601,7 @@ else()
     target_compile_options(mipsel-softmmu PRIVATE
         -DNEED_CPU_H
         -include mipsel.h
-        -I${CMAKE_BINARY_DIR}/mipsel-softmmu
+        -I${CMAKE_CURRENT_BINARY_DIR}/mipsel-softmmu
         -I${CMAKE_CURRENT_SOURCE_DIR}/qemu/target-mips
     )
 endif()
@@ -602,7 +642,7 @@ else()
     target_compile_options(mips64-softmmu PRIVATE
         -DNEED_CPU_H
         -include mips64.h
-        -I${CMAKE_BINARY_DIR}/mips64-softmmu
+        -I${CMAKE_CURRENT_BINARY_DIR}/mips64-softmmu
         -I${CMAKE_CURRENT_SOURCE_DIR}/qemu/target-mips
     )
 endif()
@@ -643,7 +683,7 @@ else()
     target_compile_options(mips64el-softmmu PRIVATE
         -DNEED_CPU_H
         -include mips64el.h
-        -I${CMAKE_BINARY_DIR}/mips64el-softmmu
+        -I${CMAKE_CURRENT_BINARY_DIR}/mips64el-softmmu
         -I${CMAKE_CURRENT_SOURCE_DIR}/qemu/target-mips
     )
 endif()
@@ -686,7 +726,7 @@ else()
     target_compile_options(sparc-softmmu PRIVATE
         -DNEED_CPU_H
         -include sparc.h
-        -I${CMAKE_BINARY_DIR}/sparc-softmmu
+        -I${CMAKE_CURRENT_BINARY_DIR}/sparc-softmmu
         -I${CMAKE_CURRENT_SOURCE_DIR}/qemu/target-sparc
     )
 endif()
@@ -728,7 +768,7 @@ else()
     target_compile_options(sparc64-softmmu PRIVATE
         -DNEED_CPU_H
         -include sparc64.h
-        -I${CMAKE_BINARY_DIR}/sparc64-softmmu
+        -I${CMAKE_CURRENT_BINARY_DIR}/sparc64-softmmu
         -I${CMAKE_CURRENT_SOURCE_DIR}/qemu/target-sparc
     )
 endif()
@@ -787,14 +827,18 @@ else()
         ${UNICORN_SRCS_COMMON}
         qemu/util/oslib-posix.c
         qemu/util/qemu-thread-posix.c
-        ${CMAKE_BINARY_DIR}/qapi-types.c
-        ${CMAKE_BINARY_DIR}/qapi-visit.c
+        ${CMAKE_CURRENT_BINARY_DIR}/qapi-types.c
+        ${CMAKE_CURRENT_BINARY_DIR}/qapi-visit.c
+        ${CMAKE_CURRENT_BINARY_DIR}/qapi-types.h
+        ${CMAKE_CURRENT_BINARY_DIR}/qapi-visit.h
     )
 endif()
 
-add_library(unicorn SHARED
-    ${UNICORN_SRCS}
-)
+add_library(unicorn        SHARED ${UNICORN_SRCS})
+add_library(unicorn-static STATIC ${UNICORN_SRCS})
+
+target_include_directories(unicorn PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
+target_include_directories(unicorn-static PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 if (UNICORN_HAS_X86)
     set(UNICRON_COMPILE_OPTIONS ${UNICRON_COMPILE_OPTIONS} -DUNICORN_HAS_X86)
@@ -837,17 +881,12 @@ if(MSVC)
         ${UNICRON_LINK_LIBRARIES}
     )
 else()
-    target_compile_options(unicorn PRIVATE
-        ${UNICRON_COMPILE_OPTIONS}
-    )
-    target_link_libraries(unicorn
-        ${UNICRON_LINK_LIBRARIES}
-        m
-    )
-    set_target_properties(unicorn PROPERTIES
-        VERSION ${UNICORN_VERSION_MAJOR}
-        SOVERSION ${UNICORN_VERSION_MAJOR}
-    )
+    target_compile_options(unicorn PRIVATE ${UNICRON_COMPILE_OPTIONS})
+    target_link_libraries(unicorn ${UNICRON_LINK_LIBRARIES} m)
+    set_target_properties(unicorn PROPERTIES VERSION ${UNICORN_VERSION_MAJOR} SOVERSION ${UNICORN_VERSION_MAJOR})
+
+    target_compile_options(unicorn-static PRIVATE ${UNICRON_COMPILE_OPTIONS})
+    target_link_libraries(unicorn-static ${UNICRON_LINK_LIBRARIES} m)
 endif()
 
 if(MSVC)
@@ -878,7 +917,7 @@ if(NOT MSVC)
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     )
     install(FILES ${UNICORN_HEADERS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/unicorn)
-    file(WRITE ${CMAKE_BINARY_DIR}/unicorn.pc "Name: unicorn\n\
+    file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/unicorn.pc "Name: unicorn\n\
 Description: Unicorn emulator engine\n\
 Version: ${UNICORN_VERSION_MAJOR}.${UNICORN_VERSION_MINOR}.${UNICORN_VERSION_PATCH}\n\
 libdir=${CMAKE_INSTALL_FULL_LIBDIR}\n\
@@ -886,5 +925,5 @@ includedir=${CMAKE_INSTALL_FULL_INCLUDEDIR}\n\
 Libs: -L\$\{libdir\} -lunicorn\n\
 Cflags: -I\$\{includedir\}\n"
     )
-    install(FILES ${CMAKE_BINARY_DIR}/unicorn.pc DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
+    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/unicorn.pc DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
 endif()

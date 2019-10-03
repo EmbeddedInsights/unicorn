@@ -1,0 +1,6 @@
+#define ${TARGET_NAME_VAR} 1
+#define TARGET_NAME "${TARGET_NAME}"
+#cmakedefine01 CONFIG_SOFTMMU
+#cmakedefine TARGET_WORDS_BIGENDIAN 1
+
+

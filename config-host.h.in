@@ -1,0 +1,7 @@
+#cmakedefine01 HOST_X86_64
+#cmakedefine01 CONFIG_POSIX
+#cmakedefine01 CONFIG_LINUX
+#cmakedefine01 CONFIG_BYTESWAP_H
+#cmakedefine01 CONFIG_VALGRIND_H
+#cmakedefine01 CONFIG_CPUID_H
+#cmakedefine01 CONFIG_INT128
