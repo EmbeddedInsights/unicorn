@@ -376,6 +376,8 @@ add_library(armeb-softmmu
     qemu/tcg/optimize.c
     qemu/tcg/tcg.c
     qemu/translate-all.c
+    ${CMAKE_CURRENT_BINARY_DIR}/qapi-types.h
+    ${CMAKE_CURRENT_BINARY_DIR}/qapi-visit.h
 )
 
 if(MSVC)
