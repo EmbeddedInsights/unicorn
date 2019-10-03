@@ -142,11 +142,11 @@ else()
 
     configure_file(config-host.h.in ${CMAKE_CURRENT_BINARY_DIR}/config-host.h)
 
-    execute_process(COMMAND sh ${CMAKE_CURRENT_SOURCE_DIR}/qemu/configure
-        ${EXTRA_CFLAGS}
-        ${TARGET_LIST}
-        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-    )
+    #execute_process(COMMAND sh ${CMAKE_CURRENT_SOURCE_DIR}/qemu/configure
+    #    ${EXTRA_CFLAGS}
+    #    ${TARGET_LIST}
+    #    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+    #)
     #execute_process(COMMAND sh ${CMAKE_CURRENT_SOURCE_DIR}/qemu/scripts/create_config
     #    INPUT_FILE ${CMAKE_CURRENT_BINARY_DIR}/config-host.mak
     #    OUTPUT_FILE ${CMAKE_CURRENT_BINARY_DIR}/config-host.h
@@ -159,7 +159,7 @@ else()
         )
     endif()
     if (UNICORN_HAS_ARM)
-    
+
         set(TARGET_NAME "arm")
         set(TARGET_NAME_VAR TARGET_ARM)
         set(CONFIG_SOFTMMU 1)
