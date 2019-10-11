@@ -627,6 +627,9 @@ uc_err uc_mem_map(uc_engine *uc, uint64_t address, size_t size, uint32_t perms);
 UNICORN_EXPORT
 uc_err uc_mmio_map(uc_engine *uc, uint64_t address, size_t size, uc_cb_mmio_read read_cb, uc_cb_mmio_write write_cb, void *user_data);
 
+UNICORN_EXPORT
+uc_err uc_mmio_unmap(struct uc_struct *uc, uint64_t address, size_t size);
+
 /*
  Map existing host memory in for emulation.
  This API adds a memory region that can be used by emulation.
